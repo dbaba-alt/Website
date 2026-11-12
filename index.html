@@ -74,6 +74,12 @@ nav a:hover{border-bottom-color:var(--gold)}
 .services{background:var(--pasture-deep);color:#EEF2EC;padding:72px 0 80px}
 .services h2,.visit h2,.contact h2,.expect h2{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.2;margin:0 0 .6rem}
 .services .intro{max-width:36rem;color:#C9D6CC;margin:0 0 3rem}
+.announcements{background:var(--paper);color:var(--ink);padding:1.5rem 1.75rem;margin:0 0 3.5rem;border-left:4px solid var(--gold);border-radius:3px}
+.announcements h2{font-family:var(--display);font-size:1.5rem;margin:0 0 1rem}
+.announcement + .announcement{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}
+.announcement h3{font-family:var(--display);font-size:1.2rem;margin:0}
+.announcement time{display:block;color:var(--ink-soft);font-size:.92rem;margin:.2rem 0}
+.announcement p{margin:.5rem 0 0;white-space:pre-line}
 .schedule{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .temple{padding:0 40px 0 0}
 .temple + .temple{padding:0 0 0 40px;border-left:1px solid var(--gold)}
@@ -190,6 +196,10 @@ footer a{color:#fff;text-underline-offset:4px}
 
   <section class="services" id="services" aria-labelledby="services-h">
     <div class="wrap">
+      <section class="announcements" id="announcements" aria-labelledby="announcements-h" hidden>
+        <h2 id="announcements-h">Announcements</h2>
+        <div id="announcementsList"></div>
+      </section>
       <h2 id="services-h">Sunday services</h2>
       <p class="intro">Services include sutra chanting, recitations, and a dharma message about Shin Buddhism.</p>
       <div class="schedule">

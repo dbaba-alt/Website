@@ -168,6 +168,47 @@
     if (upcomingSection) upcomingSection.hidden = !upcoming.length;
   }
 
+  function renderAnnouncements(cfg) {
+    var section = document.getElementById("announcements");
+    var list = document.getElementById("announcementsList");
+    if (!section || !list || !root.SiteLogic || typeof root.SiteLogic.activeAnnouncements !== "function") return;
+
+    var announcements = root.SiteLogic.activeAnnouncements(cfg.announcements, root.SiteLogic.hawaiiToday());
+    list.replaceChildren();
+
+    announcements.forEach(function (item) {
+      var article = document.createElement("article");
+      article.className = "announcement";
+
+      var title = document.createElement("h3");
+      title.textContent = item.title;
+      article.appendChild(title);
+
+      var date = root.SiteLogic.parseISO(item.date);
+      if (date !== null) {
+        var time = document.createElement("time");
+        time.dateTime = root.SiteLogic.toISO(date);
+        time.textContent = new Date(date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "UTC"
+        });
+        article.appendChild(time);
+      }
+
+      if (item.text) {
+        var text = document.createElement("p");
+        text.textContent = item.text;
+        article.appendChild(text);
+      }
+
+      list.appendChild(article);
+    });
+
+    section.hidden = announcements.length === 0;
+  }
+
   function renderTempleCards(cfg) {
     var cards = document.querySelectorAll(".temple");
     var temples = cfg.temples || [];
@@ -257,6 +298,7 @@
   ready(function () {
     var cfg = root.SITE || {};
     renderNotice(cfg);
+    renderAnnouncements(cfg);
     renderTempleCards(cfg);
     renderVisitPlaces(cfg);
     renderNextService(cfg);
