@@ -85,6 +85,12 @@ window.SITE = {
        },
      ---------------------------------------------------------- */
   announcements: [
+    {
+      title: "new years party",
+      date: "2027-01-01",
+      until: "2027-01-01",
+      text: "Please RSVP via the link or go to the newspaper posted"
+    }
   ],
 
   /* ----------------------------------------------------------
