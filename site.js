@@ -99,3 +99,168 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SiteLogic = api;
 })(typeof window !== "undefined" ? window : this);
+
+(function (root) {
+  "use strict";
+
+  function ready(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+      fn();
+    }
+  }
+
+  function renderNotice(cfg) {
+    var notice = document.querySelector(".notice");
+    if (notice) notice.hidden = !cfg.showConceptNotice;
+
+    var footerNote = document.querySelector("footer p:last-child");
+    if (footerNote) footerNote.hidden = !cfg.showConceptNotice;
+  }
+
+  function formatDisplayDate(ts) {
+    return new Date(ts).toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC"
+    });
+  }
+
+  function renderNextService(cfg) {
+    if (!root.SiteLogic || typeof root.SiteLogic.buildUpcoming !== "function") return;
+
+    var today = root.SiteLogic.hawaiiToday();
+    var upcoming = root.SiteLogic.buildUpcoming(cfg, today, 6) || [];
+    var next = upcoming[0] || null;
+    var nextLabel = document.getElementById("nextLabel");
+    var nextWhen = document.getElementById("nextWhen");
+    var nextWhere = document.getElementById("nextWhere");
+    var nextPanel = document.getElementById("next");
+    var upcomingBody = document.getElementById("upcomingBody");
+
+    if (nextLabel) nextLabel.textContent = next && next.ts === today ? "Service today" : "Next service";
+    if (nextWhen) nextWhen.textContent = next ? formatDisplayDate(next.ts) : "";
+    if (nextWhere) nextWhere.textContent = next ? [next.temple, next.time].filter(Boolean).join(", ") : "";
+    if (nextPanel) nextPanel.classList.toggle("on", !!next);
+
+    if (upcomingBody) {
+      upcomingBody.innerHTML = "";
+      (upcoming.slice(0, 6)).forEach(function (item) {
+        var tr = document.createElement("tr");
+        var cells = [
+          formatDisplayDate(item.ts),
+          item.temple,
+          item.time || (item.note ? item.note : "")
+        ];
+
+        cells.forEach(function (cellText) {
+          var td = document.createElement("td");
+          td.textContent = cellText;
+          tr.appendChild(td);
+        });
+        upcomingBody.appendChild(tr);
+      });
+    }
+
+    var upcomingSection = document.getElementById("upcoming");
+    if (upcomingSection) upcomingSection.hidden = !upcoming.length;
+  }
+
+  function renderTempleCards(cfg) {
+    var cards = document.querySelectorAll(".temple");
+    var temples = cfg.temples || [];
+
+    cards.forEach(function (card, index) {
+      var temple = temples[index] || {};
+      if (!temple.name) {
+        card.hidden = true;
+        return;
+      }
+
+      card.hidden = false;
+      var title = card.querySelector("h3");
+      var days = card.querySelector(".days");
+      var time = card.querySelector(".time");
+      var place = card.querySelector(".place");
+
+      if (title) title.textContent = temple.fullName || temple.name;
+      if (days) days.textContent = root.SiteLogic && typeof root.SiteLogic.describeSundays === "function"
+        ? root.SiteLogic.describeSundays(temple.sundays || [])
+        : "";
+      if (time) time.textContent = temple.time || "";
+      if (place) place.textContent = [temple.street, temple.city].filter(Boolean).join(", ");
+    });
+  }
+
+  function renderVisitPlaces(cfg) {
+    var places = document.querySelectorAll(".place");
+    var temples = cfg.temples || [];
+
+    places.forEach(function (placeCard, index) {
+      var temple = temples[index] || {};
+      if (!temple.name) {
+        placeCard.hidden = true;
+        return;
+      }
+
+      placeCard.hidden = false;
+      var title = placeCard.querySelector("h3");
+      var address = placeCard.querySelector("address");
+      var mail = placeCard.querySelector(".mail");
+      var mapLink = placeCard.querySelector(".maplink");
+
+      if (title) title.textContent = temple.fullName || temple.name;
+      if (address) address.innerHTML = [temple.street, temple.city].filter(Boolean).join("<br>");
+      if (mail) mail.textContent = temple.mailing ? "Mailing address: " + temple.mailing : "";
+      if (mapLink) {
+        var query = temple.mapQuery || [temple.street, temple.city].filter(Boolean).join(" ");
+        mapLink.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+        mapLink.textContent = "Open " + (temple.name || "temple") + " in Maps";
+      }
+    });
+  }
+
+  function renderWordmark(cfg) {
+    var wordmark = document.querySelector(".wordmark");
+    if (!wordmark) return;
+
+    var titleText = (cfg.temples || []).map(function (t) {
+      return t.fullName || t.name;
+    }).join(" and ");
+
+    if (titleText) {
+      var text = document.createTextNode(titleText);
+      wordmark.innerHTML = "";
+      wordmark.appendChild(text);
+      var small = document.createElement("small");
+      small.textContent = "Shin Buddhist temples in North Hawaiʻi";
+      wordmark.appendChild(small);
+    }
+  }
+
+  function renderHero(cfg) {
+    var title = document.querySelector(".hero h1");
+    if (title && cfg.temples && cfg.temples.length) {
+      title.textContent = cfg.temples.map(function (t) { return t.name; }).join(" and ") + " Hongwanji Missions";
+    }
+
+    var lede = document.querySelector(".hero .lede");
+    if (lede) {
+      lede.textContent = "Two Shin Buddhist temples in North Hawaiʻi. If you would like to attend a service, Reverend Daido Baba will be glad to hear from you.";
+    }
+  }
+
+  if (typeof document === "undefined") return;
+
+  ready(function () {
+    var cfg = root.SITE || {};
+    renderNotice(cfg);
+    renderTempleCards(cfg);
+    renderVisitPlaces(cfg);
+    renderNextService(cfg);
+    renderHero(cfg);
+    renderWordmark(cfg);
+  });
+})(typeof window !== "undefined" ? window : this);

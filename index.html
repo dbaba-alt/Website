@@ -282,50 +282,7 @@ footer a{color:#fff;text-underline-offset:4px}
   </div>
 </footer>
 
-<script>
-(function(){
-  var SCHEDULE=[
-    {temple:"Kamuela",nths:[2,4],time:"9:00 to 10:00 AM"},
-    {temple:"Kohala",nths:[3],time:"10:00 to 11:00 AM"}
-  ];
-  function hawaiiToday(){
-    var p=new Intl.DateTimeFormat("en-CA",{timeZone:"Pacific/Honolulu",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date()).split("-").map(Number);
-    return Date.UTC(p[0],p[1]-1,p[2]);
-  }
-  function nthSunday(y,m,n){
-    var dow=new Date(Date.UTC(y,m,1)).getUTCDay();
-    return Date.UTC(y,m,1+((7-dow)%7)+(n-1)*7);
-  }
-  function fmt(ts){return new Date(ts).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",timeZone:"UTC"});}
-  try{
-    var today=hawaiiToday(),t=new Date(today),list=[];
-    for(var i=0;i<4;i++){
-      var y=t.getUTCFullYear(),m=t.getUTCMonth()+i;
-      SCHEDULE.forEach(function(s){
-        s.nths.forEach(function(n){
-          var ts=nthSunday(y,m,n);
-          if(ts>=today){list.push({ts:ts,temple:s.temple,time:s.time});}
-        });
-      });
-    }
-    list.sort(function(a,b){return a.ts-b.ts;});
-    if(!list.length){return;}
-    var first=list[0];
-    document.getElementById("nextLabel").textContent=first.ts===today?"Service today":"Next service";
-    document.getElementById("nextWhen").textContent=fmt(first.ts);
-    document.getElementById("nextWhere").textContent=first.temple+", "+first.time;
-    document.getElementById("next").classList.add("on");
-    var body=document.getElementById("upcomingBody");
-    list.slice(0,6).forEach(function(r){
-      var tr=document.createElement("tr");
-      [fmt(r.ts),r.temple,r.time].forEach(function(v){
-        var td=document.createElement("td");td.textContent=v;tr.appendChild(td);
-      });
-      body.appendChild(tr);
-    });
-    document.getElementById("upcoming").hidden=false;
-  }catch(e){}
-})();
-</script>
+<script src="content.js"></script>
+<script src="site.js"></script>
 </body>
 </html>
