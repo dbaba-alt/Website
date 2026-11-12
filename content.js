@@ -21,7 +21,7 @@
 window.SITE = {
 
   // Set to false to remove the "concept redesign" banner and footer line.
-  showConceptNotice: true
+  showConceptNotice: true,
 
   /* ----------------------------------------------------------
      1. TEMPLES AND REGULAR SCHEDULE
