@@ -149,10 +149,13 @@
       upcomingBody.innerHTML = "";
       (upcoming.slice(0, 6)).forEach(function (item) {
         var tr = document.createElement("tr");
+        var serviceText = item.cancelled
+          ? ["No service", item.note].filter(Boolean).join(" — ")
+          : [item.time, item.note].filter(Boolean).join(" — ");
         var cells = [
           formatDisplayDate(item.ts),
           item.temple,
-          item.time || (item.note ? item.note : "")
+          serviceText
         ];
 
         cells.forEach(function (cellText) {
@@ -210,57 +213,127 @@
   }
 
   function renderTempleCards(cfg) {
-    var cards = document.querySelectorAll(".temple");
+    var schedule = document.querySelector(".schedule");
+    if (!schedule) return;
+
     var temples = cfg.temples || [];
+    schedule.replaceChildren();
 
-    cards.forEach(function (card, index) {
-      var temple = temples[index] || {};
-      if (!temple.name) {
-        card.hidden = true;
-        return;
-      }
+    temples.forEach(function (temple) {
+      if (!temple || !temple.name) return;
 
-      card.hidden = false;
-      var title = card.querySelector("h3");
-      var days = card.querySelector(".days");
-      var time = card.querySelector(".time");
-      var place = card.querySelector(".place");
+      var card = document.createElement("div");
+      card.className = "temple";
 
-      if (title) title.textContent = temple.fullName || temple.name;
-      if (days) days.textContent = root.SiteLogic && typeof root.SiteLogic.describeSundays === "function"
+      var title = document.createElement("h3");
+      title.textContent = temple.name;
+      card.appendChild(title);
+
+      var days = document.createElement("p");
+      days.className = "days";
+      days.textContent = root.SiteLogic && typeof root.SiteLogic.describeSundays === "function"
         ? root.SiteLogic.describeSundays(temple.sundays || [])
         : "";
-      if (time) time.textContent = temple.time || "";
-      if (place) place.textContent = [temple.street, temple.city].filter(Boolean).join(", ");
+      card.appendChild(days);
+
+      var time = document.createElement("p");
+      time.className = "time";
+      time.textContent = temple.time || "";
+      card.appendChild(time);
+
+      var place = document.createElement("p");
+      place.className = "place";
+      place.textContent = [temple.street, temple.city].filter(Boolean).join(", ");
+      card.appendChild(place);
+      schedule.appendChild(card);
     });
   }
 
   function renderVisitPlaces(cfg) {
-    var places = document.querySelectorAll(".place");
+    var places = document.querySelector(".places");
+    if (!places) return;
+
     var temples = cfg.temples || [];
+    places.replaceChildren();
 
-    places.forEach(function (placeCard, index) {
-      var temple = temples[index] || {};
-      if (!temple.name) {
-        placeCard.hidden = true;
-        return;
-      }
+    temples.forEach(function (temple) {
+      if (!temple || !temple.name) return;
 
-      placeCard.hidden = false;
-      var title = placeCard.querySelector("h3");
-      var address = placeCard.querySelector("address");
-      var mail = placeCard.querySelector(".mail");
-      var mapLink = placeCard.querySelector(".maplink");
+      var placeCard = document.createElement("div");
+      placeCard.className = "place-card";
 
-      if (title) title.textContent = temple.fullName || temple.name;
-      if (address) address.innerHTML = [temple.street, temple.city].filter(Boolean).join("<br>");
-      if (mail) mail.textContent = temple.mailing ? "Mailing address: " + temple.mailing : "";
-      if (mapLink) {
-        var query = temple.mapQuery || [temple.street, temple.city].filter(Boolean).join(" ");
-        mapLink.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
-        mapLink.textContent = "Open " + (temple.name || "temple") + " in Maps";
-      }
+      var title = document.createElement("h3");
+      title.textContent = temple.fullName || temple.name;
+      placeCard.appendChild(title);
+
+      var address = document.createElement("address");
+      [temple.street, temple.city].filter(Boolean).forEach(function (line, index) {
+        if (index) address.appendChild(document.createElement("br"));
+        address.appendChild(document.createTextNode(line));
+      });
+      placeCard.appendChild(address);
+
+      var mail = document.createElement("p");
+      mail.className = "mail";
+      mail.textContent = temple.mailing ? "Mailing address: " + temple.mailing : "";
+      placeCard.appendChild(mail);
+
+      var query = temple.mapQuery || [temple.street, temple.city].filter(Boolean).join(" ");
+      var mapLink = document.createElement("a");
+      mapLink.className = "maplink";
+      mapLink.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+      mapLink.textContent = "Open " + temple.name + " in Maps";
+      placeCard.appendChild(mapLink);
+      places.appendChild(placeCard);
     });
+
+    var visitSection = document.getElementById("visit");
+    if (visitSection) visitSection.hidden = places.children.length === 0;
+  }
+
+  function renderPhotos(cfg) {
+    var section = document.getElementById("gallery");
+    var gallery = document.getElementById("photoGallery");
+    if (!section || !gallery) return;
+
+    gallery.replaceChildren();
+    (cfg.photos || []).forEach(function (photo) {
+      if (!photo || !photo.file) return;
+
+      var figure = document.createElement("figure");
+      figure.className = "gallery-item";
+
+      var image = document.createElement("img");
+      image.src = (cfg.photoFolder || "") + photo.file;
+      image.alt = photo.caption || "";
+      image.loading = "lazy";
+      figure.appendChild(image);
+
+      if (photo.caption || photo.date) {
+        var caption = document.createElement("figcaption");
+        if (photo.caption) caption.appendChild(document.createTextNode(photo.caption));
+        var date = root.SiteLogic && typeof root.SiteLogic.parseISO === "function"
+          ? root.SiteLogic.parseISO(photo.date)
+          : null;
+        if (date !== null) {
+          if (photo.caption) caption.appendChild(document.createElement("br"));
+          var time = document.createElement("time");
+          time.dateTime = root.SiteLogic.toISO(date);
+          time.textContent = new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            timeZone: "UTC"
+          });
+          caption.appendChild(time);
+        }
+        figure.appendChild(caption);
+      }
+
+      gallery.appendChild(figure);
+    });
+
+    section.hidden = gallery.children.length === 0;
   }
 
   function renderWordmark(cfg) {
@@ -282,15 +355,23 @@
   }
 
   function renderHero(cfg) {
+    var temples = cfg.temples || [];
+    var templeNames = temples.filter(function (temple) { return temple && temple.name; }).map(function (temple) {
+      return temple.name;
+    });
     var title = document.querySelector(".hero h1");
-    if (title && cfg.temples && cfg.temples.length) {
-      title.textContent = cfg.temples.map(function (t) { return t.name; }).join(" and ") + " Hongwanji Missions";
+    if (title && templeNames.length) {
+      title.textContent = templeNames.join(" and ") + " Hongwanji Missions";
     }
 
     var lede = document.querySelector(".hero .lede");
-    if (lede) {
-      lede.textContent = "Two Shin Buddhist temples in North Hawaiʻi. If you would like to attend a service, Reverend Daido Baba will be glad to hear from you.";
+    if (lede && templeNames.length) {
+      lede.textContent = templeNames.length === 2
+        ? "Two Shin Buddhist temples in North Hawaiʻi. If you would like to attend a service, Reverend Daido Baba will be glad to hear from you."
+        : templeNames.length + " Shin Buddhist temples in North Hawaiʻi. If you would like to attend a service, Reverend Daido Baba will be glad to hear from you.";
     }
+
+    if (templeNames.length) document.title = templeNames.join(" and ") + " Hongwanji Missions";
   }
 
   if (typeof document === "undefined") return;
@@ -301,6 +382,7 @@
     renderAnnouncements(cfg);
     renderTempleCards(cfg);
     renderVisitPlaces(cfg);
+    renderPhotos(cfg);
     renderNextService(cfg);
     renderHero(cfg);
     renderWordmark(cfg);

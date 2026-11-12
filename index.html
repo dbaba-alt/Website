@@ -107,10 +107,18 @@ nav a:hover{border-bottom-color:var(--gold)}
 /* visit */
 .visit{padding:72px 0 24px}
 .places{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:2rem}
-.place h3{font-family:var(--display);font-size:1.5rem;margin:0 0 .6rem}
-.place address{font-style:normal;margin:0 0 1rem}
-.place .mail{color:var(--ink-soft);font-size:.95rem;margin:0 0 1.2rem}
-.place a.maplink{font-weight:700;color:var(--indigo);text-underline-offset:4px;text-decoration-thickness:2px}
+.place-card h3{font-family:var(--display);font-size:1.5rem;margin:0 0 .6rem}
+.place-card address{font-style:normal;margin:0 0 1rem}
+.place-card .mail{color:var(--ink-soft);font-size:.95rem;margin:0 0 1.2rem}
+.place-card a.maplink{font-weight:700;color:var(--indigo);text-underline-offset:4px;text-decoration-thickness:2px}
+
+/* gallery */
+.gallery{padding:72px 0 24px}
+.gallery h2{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.2;margin:0 0 1.5rem}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.gallery-item{margin:0}
+.gallery-item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}
+.gallery-item figcaption{color:var(--ink-soft);font-size:.95rem;margin-top:.5rem}
 
 /* contact */
 .contact{padding:72px 0 88px}
@@ -202,20 +210,7 @@ footer a{color:#fff;text-underline-offset:4px}
       </section>
       <h2 id="services-h">Sunday services</h2>
       <p class="intro">Services include sutra chanting, recitations, and a dharma message about Shin Buddhism.</p>
-      <div class="schedule">
-        <div class="temple">
-          <h3>Kamuela</h3>
-          <p class="days">2nd and 4th Sundays</p>
-          <p class="time">9:00 to 10:00 AM</p>
-          <p class="place">65-1110 Mamalahoa Hwy., Kamuela</p>
-        </div>
-        <div class="temple">
-          <h3>Kohala</h3>
-          <p class="days">3rd Sunday</p>
-          <p class="time">10:00 to 11:00 AM</p>
-          <p class="place">53-4300 Akoni Pule Hwy., Kapaʻau</p>
-        </div>
-      </div>
+      <div class="schedule"></div>
       <div class="upcoming" id="upcoming" hidden>
         <h3>Upcoming services</h3>
         <table>
@@ -250,20 +245,14 @@ footer a{color:#fff;text-underline-offset:4px}
   <section class="visit" id="visit" aria-labelledby="visit-h">
     <div class="wrap">
       <h2 id="visit-h">Find the temples</h2>
-      <div class="places">
-        <div class="place">
-          <h3>Kamuela Hongwanji Mission</h3>
-          <address>65-1110 Mamalahoa Hwy.<br>Kamuela, HI 96743</address>
-          <p class="mail">Mailing address: PO Box 367</p>
-          <a class="maplink" href="https://www.google.com/maps/search/?api=1&query=65-1110+Mamalahoa+Hwy+Kamuela+HI+96743">Open Kamuela in Maps</a>
-        </div>
-        <div class="place">
-          <h3>Kohala Hongwanji Mission</h3>
-          <address>53-4300 Akoni Pule Hwy.<br>Kapaʻau, HI 96755</address>
-          <p class="mail">Mailing address: PO Box 26</p>
-          <a class="maplink" href="https://www.google.com/maps/search/?api=1&query=53-4300+Akoni+Pule+Hwy+Kapaau+HI+96755">Open Kohala in Maps</a>
-        </div>
-      </div>
+      <div class="places"></div>
+    </div>
+  </section>
+
+  <section class="gallery" id="gallery" aria-labelledby="gallery-h" hidden>
+    <div class="wrap">
+      <h2 id="gallery-h">Temple activities</h2>
+      <div class="gallery-grid" id="photoGallery"></div>
     </div>
   </section>
 
