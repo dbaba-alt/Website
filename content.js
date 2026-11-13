@@ -86,9 +86,9 @@ window.SITE = {
      ---------------------------------------------------------- */
   announcements: [
     {
-      title: "Mochi tsuki",
-      date: "2026-12-12",
-      until: "2026-12-13",
+      title: "Shinnenkai",
+      date: "2027-1-29",
+      until: "2027-1-30",
       text: "Come to the church in the morning from 8 am to help"
     }
   ],
