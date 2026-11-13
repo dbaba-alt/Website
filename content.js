@@ -90,8 +90,8 @@ window.SITE = {
       title: "Mochi tsuki",
       date: "2026-12-13",
       until: "2026-12-14",
-      text: "Come to the church on December 13 in the morning from 6 am to help and have fun making mochi",
-
+      text: "Come to the church on December 13 in the morning from 6 am to help and have fun making mochi",} ,
+      {
       title:"Shinnenkai",
       date:"2027-1-31",
       until: "2027-2-1",
