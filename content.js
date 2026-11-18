@@ -110,6 +110,6 @@ window.SITE = {
        { file: "bazaar-2026.jpg", caption: "Fall bazaar volunteers", date: "2026-10-18" },
      ---------------------------------------------------------- */
   photoFolder: "images/",
-  photos: [
+  photos: [ {file: "kamuela-temple.jpg", caption: "temple picture", date: "2026-11-18"}
   ]
 };
